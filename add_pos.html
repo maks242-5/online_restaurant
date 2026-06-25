@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Додавання нової позиції</title>
+</head>
+<body>
+    <h2>Додавання нової позиції</h2>
+    
+    {% include '_admin_navigation.html' %}
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul style="color: green;">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+        <p><input type="text" name="name" placeholder="Назва позиції" required></p>
+
+        <p><input type="file" name="img" accept="image/*" required></p>
+
+        <p><textarea name="ingredients" placeholder="Інгредієнти" required></textarea></p>
+
+        <p><textarea name="description" placeholder="Опис" required></textarea></p>
+
+        <p><input type="number" name="price" placeholder="Ціна (грн)" required></p>
+
+        <p><input type="number" name="weight" placeholder="Вага (г)" required></p>
+
+        <button type="submit">Додати товар</button>
+    </form>
+</body>
+</html>

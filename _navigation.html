@@ -1,0 +1,32 @@
+<header>
+    <nav class="navbar">
+        <a href="{{ url_for('home') }}" class="logo">Restaurant</a>
+        <ul class="nav-tabs">
+            <li>
+                <a href="{{ url_for('test_basket') }}" class="basket-link">
+                    🛒 Кошик
+                    {% if session.get('basket') %}
+                        <span class="basket-count">{{ session['basket']|length }}</span>
+                    {% endif %}
+                </a>
+            </li>            
+            <li><a href="{{ url_for('menu') }}">Меню</a></li>
+            <li><a href="{{ url_for('account') }}">Акаунт</a></li>
+            <li><a href="{{ url_for('profile') }}">Профіль</a></li>
+            
+            {% if current_user.is_authenticated and current_user.nickname == 'Admin' %}
+                <li><a href="{{ url_for('admin_panel') }}" style="color: #e74c3c; font-weight: bold;">📊 Адмінка</a></li>
+                <li><a href="{{ url_for('all_users') }}" style="color: #e74c3c; font-weight: bold;">👥 Користувачі</a></li>
+            {% endif %}
+        </ul>
+        <div class="auth-buttons">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('profile') }}" class="btn-profile">👤 {{ current_user.nickname }}</a>
+                <a href="{{ url_for('logout') }}" class="btn-logout">Вийти</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn-login">Вхід</a>
+                <a href="{{ url_for('register') }}" class="btn-register">Реєстрація</a>
+            {% endif %}
+        </div>
+    </nav>
+</header>

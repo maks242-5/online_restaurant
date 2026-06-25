@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tomato&Co | Онлайн Ресторан</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <div class="navbar">
+        <a href="/" class="logo">🍕 Tomato&Co</a>
+        <ul class="nav-tabs">
+            <li><a href="/" class="active">Головна</a></li>
+            <li><a href="/menu?category=pizza">Піца</a></li>
+            <li><a href="/menu?category=burgers">Бургери</a></li>
+            <li><a href="/menu?category=potatoes">Картошка</a></li>
+            <li><a href="/menu?category=drinks">Напої</a></li>
+            <li>
+                <a href="{{ url_for('test_basket') }}" class="basket-link">
+                    🛒 Кошик
+                    {% if session.get('basket') %}
+                        <span class="basket-count">{{ session['basket']|length }}</span>
+                    {% endif %}
+                </a>
+            </li>
+        </ul>
+        <div class="auth-buttons">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('profile') }}" class="btn-profile">👤 {{ current_user.nickname }}</a>
+                <a href="{{ url_for('logout') }}" class="btn-logout">Вийти</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn-login">Вхід</a>
+                <a href="{{ url_for('register') }}" class="btn-register">Реєстрація</a>
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+<section class="hero-section">
+    <h1 class="hero-title">Свіжа та гаряча їжа прямо до твоїх дверей</h1>
+    <form action="/search" method="GET" class="search-container">
+        <input type="text" name="query" class="search-input" placeholder="Що ти хочеш з'їсти сьогодні? (наприклад: Піца...)">
+        <button type="submit" class="search-button">Пошук</button>
+    </form>
+</section>
+
+<main class="main-content">
+    <h2 class="section-title">Популярні страви</h2>
+    
+    <div class="food-grid">
+
+        <div class="food-card">
+            <img src="https://images.unsplash.com/photo-1601924582971-df6b0a5f0c9b?auto=format&fit=crop&w=500&q=80" alt="Піца Пепероні" class="food-image">
+            <div class="food-info">
+                <h3 class="food-title">Піца Пепероні</h3>
+                <p class="food-desc">Моцарела, гостра пепероні, томатний соус.</p>
+                <div class="food-footer">
+                    <span class="food-price">195 ₴</span>
+                    <form method="POST" action="{{ url_for('position', name='Піца Пепероні') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <input type="hidden" name="name" value="Піца Пепероні">
+                        <input type="hidden" name="num" value="1">
+                        <button type="submit" class="btn-order">В кошик</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="food-card">
+            <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=500&q=80" alt="Бургер Чізмікс" class="food-image">
+            <div class="food-info">
+                <h3 class="food-title">Бургер Чізмікс</h3>
+                <p class="food-desc">Соковита котлета, подвійний чеддер, BBQ соус.</p>
+                <div class="food-footer">
+                    <span class="food-price">145 ₴</span>
+                    <form method="POST" action="{{ url_for('position', name='Бургер Чізмікс') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <input type="hidden" name="name" value="Бургер Чізмікс">
+                        <input type="hidden" name="num" value="1">
+                        <button type="submit" class="btn-order">В кошик</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="food-card">
+            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=500&q=80" alt="Полуничний Мілкшейк" class="food-image">
+            <div class="food-info">
+                <h3 class="food-title">Полуничний Мілкшейк</h3>
+                <p class="food-desc">Морозиво, свіжа полуниця, вершки.</p>
+                <div class="food-footer">
+                    <span class="food-price">75 ₴</span>
+                    <form method="POST" action="{{ url_for('position', name='Полуничний Мілкшейк') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <input type="hidden" name="name" value="Полуничний Мілкшейк">
+                        <input type="hidden" name="num" value="1">
+                        <button type="submit" class="btn-order">В кошик</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {% if all_positions %}
+            {% for position in all_positions %}
+                {% if "карто" in position.name.lower() or "potat" in position.name.lower() or position.name not in ['Піца Пепероні', 'Бургер Чізмікс', 'Полуничний Мілкшейк'] %}
+                    <div class="food-card">
+                        <img src="{{ url_for('static', filename='menu/' + position.file_name) }}" alt="{{ position.name }}" class="food-image">
+                        <div class="food-info">
+                            <h3 class="food-title">{{ position.name }}</h3>
+                            <p class="food-desc">{{ position.description }}</p>
+                            <div class="food-footer">
+                                <span class="food-price">{{ position.price }} ₴</span>
+                                <form method="POST" action="{{ url_for('position', name=position.name) }}">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                    <input type="hidden" name="name" value="{{ position.name }}">
+                                    <input type="hidden" name="num" value="1">
+                                    <button type="submit" class="btn-order">В кошик</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+    </div>
+</main>
+
+<footer class="footer">
+    <p>График роботи: 8:00 – 22:00</p>
+    <p>Телефон: +38 (099) 123-45-67</p>
+</footer>
+
+</body>
+</html>

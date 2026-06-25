@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Мій кошик</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include '_navigation.html' %}
+
+    <main class="main-content">
+        <h2 class="section-title">Ваш кошик</h2>
+
+        {% if basket %}
+            <table class="basket-table">
+                <thead>
+                    <tr>
+                        <th>Назва</th>
+                        <th>Кількість</th>
+                        <th>Дія</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for name, num in basket.items() %}
+                    <tr>
+                        <td>{{ name }}</td>
+                        <td>{{ num }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('remove_from_basket', name=name) }}" style="margin:0; padding:0;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                <button type="submit" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                                    ❌ Видалити
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div style="margin-top:20px;">
+                <a href="{{ url_for('create_order') }}" class="btn-order">Оформити замовлення</a>
+            </div>
+        {% else %}
+            <p>Кошик порожній</p>
+        {% endif %}
+    </main>
+</body>
+</html>

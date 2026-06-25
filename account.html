@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Tomato&Co | Особистий кабінет</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include '_navigation.html' %}
+
+    <main class="main-content">
+        <div class="auth-container" style="max-width: 550px; margin: 40px auto; padding: 40px; background: #1a1a1a; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); font-family: 'Montserrat', sans-serif; text-align: center;">
+            
+            <div style="width: 100px; height: 100px; background: #2a2a2a; border: 3px solid #ffd700; border-radius: 50%; margin: 0 auto 20px auto; display: flex; align-items: center; justify-content: center; font-size: 40px;">
+                👤
+            </div>
+
+            <h2 style="color: #ffd700; font-size: 26px; margin-bottom: 10px; font-weight: 700;">Особистий кабінет</h2>
+            <p style="color: #aaa; font-size: 16px; margin-bottom: 30px;">Ласкаво просимо до Tomato&Co!</p>
+
+            <div style="background: #222; padding: 20px; border-radius: 8px; text-align: left; margin-bottom: 30px; border-left: 4px solid #ffd700;">
+                <p style="color: #ccc; margin: 0 0 10px 0; font-size: 15px;">
+                    <strong style="color: #fff;">Ваш статус:</strong> 
+                    {% if current_user and current_user.is_admin %} Admin 👑 {% else %} Клієнт 🍕 {% endif %}
+                </p>
+                <p style="color: #ccc; margin: 0; font-size: 15px;">
+                    <strong style="color: #fff;">Email / Логін:</strong> {{ current_user.username if current_user else 'Гість' }}
+                </p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <a href="/orders" style="display: block; padding: 14px; background: #ffd700; color: #121212; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 15px; transition: 0.3s; text-transform: uppercase; letter-spacing: 0.5px;">
+                    📦 Переглянути мої замовлення
+                </a>
+                
+                <a href="/menu" style="display: block; padding: 12px; background: transparent; color: #ffd700; border: 2px solid #ffd700; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px; transition: 0.3s;">
+                    🛒 Перейти до меню страв
+                </a>
+
+                <a href="/logout" style="display: block; color: #ff4d4d; text-decoration: none; font-size: 14px; margin-top: 10px; font-weight: 600; transition: 0.2s;">
+                    Вийти з акаунта →
+                </a>
+            </div>
+            
+        </div>
+    </main>
+
+    <footer class="footer" style="margin-top: 40px;">
+        <p>© 2026 Tomato&Co. Всі права захищені.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Tomato&Co | Оформлення</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include '_navigation.html' %}
+
+    <main class="main-content">
+        <div class="auth-container" style="max-width: 600px; margin: 40px auto; padding: 30px; background: #1a1a1a; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); font-family: 'Montserrat', sans-serif;">
+            
+            {% if basket %}
+                <h1 class="auth-title" style="text-align: center; color: #fff; margin-bottom: 25px; font-size: 26px;">🛒 Оформлення замовлення</h1>
+                
+                <ul style="list-style: none; padding: 0; margin-bottom: 30px;">
+                    {% for position in basket %}
+                        <li style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #333; color: #ccc; font-size: 16px;">
+                            <span style="font-weight: 600; color: #fff;">🍔 {{ position }}</span>
+                            <span style="background: #ffd700; color: #121212; padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 14px;">к-сть: {{ basket[position] }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <form method="post" style="text-align: center;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <input type="submit" value="Оформити замовлення" class="btn-login" style="width: 100%; padding: 14px; background: #ffd700; color: #121212; font-weight: 700; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;">
+                </form>
+            {% else %}
+                <div style="text-align: center; color: #aaa; padding: 40px 20px;">
+                    <h1 style="color: #fff; font-size: 24px; margin-bottom: 20px;">Ваш список замовлень пустий</h1>
+                    <a href="/menu" class="btn-detail" style="display: inline-block; padding: 10px 20px; background: #ffd700; color: #121212; text-decoration: none; border-radius: 6px; font-weight: 600;">Перейти до меню</a>
+                </div>
+            {% endif %}
+
+        </div>
+    </main>
+
+    <footer class="footer" style="margin-top: 40px;">
+        <p>© 2026 Tomato&Co. Всі права захищені.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель Управління Рестораном</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        .fade-out { animation: fadeOut 4s forwards; }
+        @keyframes fadeOut { 0%, 80% { opacity: 1; } 100% { opacity: 0; display: none; } }
+    </style>
+</head>
+<body class="admin-body">
+
+    <div class="admin-layout">
+        
+        <aside class="admin-sidebar">
+            <div>
+                <div class="sidebar-logo-container">
+                    <div class="sidebar-logo-icon">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                    <span class="sidebar-logo-text">AdminPanel</span>
+                </div>
+                
+                <nav class="sidebar-nav">
+                    <button type="button" id="btn-dashboard" data-tab="dashboard" class="tab-btn active">
+                        <i class="fa-solid fa-chart-pie"></i> Дашборд
+                    </button>
+                    <button type="button" id="btn-menu" data-tab="menu" class="tab-btn">
+                        <i class="fa-solid fa-book-open"></i> Керування меню
+                    </button>
+                    <button type="button" id="btn-reservations" data-tab="reservations" class="tab-btn">
+                        <i class="fa-solid fa-calendar-check"></i> Бронювання столів
+                    </button>
+                    <button type="button" id="btn-users" data-tab="users" class="tab-btn">
+                        <i class="fa-solid fa-users"></i> Клієнти базы
+                    </button>
+                </nav>
+            </div>
+
+            <div class="sidebar-footer">
+                <a href="{{ url_for('home') }}" class="sidebar-link">
+                    <i class="fa-solid fa-arrow-left"></i> На головну сайту
+                </a>
+                <a href="{{ url_for('logout') }}" class="sidebar-link logout">
+                    <i class="fa-solid fa-right-from-bracket"></i> Завершити сесію
+                </a>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="fade-out mb-6">
+                        {% for category, message in messages %}
+                            <div class="flash-msg {{ category }}">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <span>{{ message }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <section id="tab-dashboard" class="tab-content block">
+                <div class="admin-page-header">
+                    <h1>Головна Панель</h1>
+                    <p>Загальний стан системи та остання активність.</p>
+                </div>
+
+                <div class="admin-grid">
+                    <div class="admin-card">
+                        <div>
+                            <p class="card-title">Всього страв</p>
+                            <h3 class="card-value">{{ all_positions|length if all_positions else '0' }}</h3>
+                        </div>
+                        <div class="card-icon burger"><i class="fa-solid fa-burger"></i></div>
+                    </div>
+                    <div class="admin-card">
+                        <div>
+                            <p class="card-title">Активні броні</p>
+                            <h3 class="card-value">{{ all_reservations|length if all_reservations else '0' }}</h3>
+                        </div>
+                        <div class="card-icon chair"><i class="fa-solid fa-chair"></i></div>
+                    </div>
+                    <div class="admin-card">
+                        <div>
+                            <p class="card-title">Клієнтів</p>
+                            <h3 class="card-value">{{ all_users|length if all_users else '0' }}</h3>
+                        </div>
+                        <div class="card-icon users"><i class="fa-solid fa-users"></i></div>
+                    </div>
+                    <div class="admin-card">
+                        <div>
+                            <p class="card-title">Статус серверу</p>
+                            <h3 class="card-value status-online"><span class="pulse-dot"></span> Online</h3>
+                        </div>
+                        <div class="card-icon server"><i class="fa-solid fa-server"></i></div>
+                    </div>
+                </div>
+
+                <div class="admin-banner">
+                    <div class="banner-text">
+                        <h2>Адміністратор закладу</h2>
+                        <p>Ви перебуваєте в захищеному центрі управління рестораном. Використовуйте бічне меню для швидкої навігації між реєстрами замовлень, оновлення картки страв та моніторингу завантаженості залів.</p>
+                    </div>
+                    <i class="fa-solid fa-shield-halved banner-icon"></i>
+                </div>
+            </section>
+
+            <section id="tab-menu" class="tab-content hidden">
+                <div class="admin-page-header">
+                    <h1>Керування Меню</h1>
+                    <p>Додавання нових позицій, деактивація страв або їх повне видалення з бази.</p>
+                </div>
+
+                <div class="menu-management-layout">
+                    <div class="form-container-card">
+                        <h2><i class="fa-solid fa-circle-plus"></i> Створити картку страви</h2>
+                        <form action="{{ url_for('add_position') }}" method="POST" enctype="multipart/form-data" class="admin-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                            
+                            <div class="form-group">
+                                <label>Назва страви</label>
+                                <input type="text" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Інгредієнти</label>
+                                <input type="text" name="ingredients" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Опис (на сайті)</label>
+                                <textarea name="description" rows="3" required></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Ціна (грн)</label>
+                                    <input type="number" name="price" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Вага (г)</label>
+                                    <input type="number" name="weight" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Фотокартка страви</label>
+                                <input type="file" name="img" required class="file-input">
+                            </div>
+                            <button type="submit" class="btn-submit-form">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Опублікувати в меню
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="table-container-card">
+                        <h2>Позиції в базі даних</h2>
+                        <div class="admin-table-scroll">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Фото</th>
+                                        <th>Назва / Вага</th>
+                                        <th>Ціна</th>
+                                        <th>Статус</th>
+                                        <th style="text-align: right;">Дії</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for pos in all_positions %}
+                                    <tr>
+                                        <td>
+                                            <img src="{{ url_for('static', filename='menu/' ~ pos.file_name) }}" alt="" class="table-img">
+                                        </td>
+                                        <td>
+                                            <div class="table-bold-text">{{ pos.name }}</div>
+                                            <div class="table-sub-text">{{ pos.weight }} грам</div>
+                                        </td>
+                                        <td class="table-bold-text">{{ pos.price }} ₴</td>
+                                        <td>
+                                            {% if pos.active %}
+                                            <span class="badge badge-success">Активна</span>
+                                            {% else %}
+                                            <span class="badge badge-slate">Прихована</span>
+                                            {% endif %}
+                                        </td>
+                                        <td style="text-align: right;">
+                                            <div class="table-actions">
+                                                <form action="{{ url_for('menu_check') }}" method="POST" style="display: inline;">
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                                    <input type="hidden" name="pos_id" value="{{ pos.id }}">
+                                                    <button type="submit" name="change_status" class="btn-action-status">
+                                                        <i class="fa-solid fa-toggle-on"></i> Status
+                                                    </button>
+                                                </form>
+                                                <form action="{{ url_for('menu_check') }}" method="POST" style="display: inline;" class="delete-form">
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                                    <input type="hidden" name="pos_id" value="{{ pos.id }}">
+                                                    <button type="submit" name="delete_position" class="btn-action-delete">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="5" class="table-empty">Картки страв ще не створені.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-reservations" class="tab-content hidden">
+                <div class="admin-page-header">
+                    <h1>Резервації Столів</h1>
+                    <p>Поточний контроль заброньованих місць.</p>
+                </div>
+
+                <div class="table-container-card full-width">
+                    <div class="admin-table-scroll">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Користувач (ID)</th>
+                                    <th>Формат стола</th>
+                                    <th>Призначений час</th>
+                                    <th style="text-align: right;">Управління</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in all_reservations %}
+                                <tr>
+                                    <td class="table-mono-text">#{{ res.id }}</td>
+                                    <td>Користувач ({{ res.user_id }})</td>
+                                    <td>На {{ res.type_table }} осіб</td>
+                                    <td>{{ res.time_start }}</td>
+                                    <td style="text-align: right;">
+                                        <form action="{{ url_for('reservations_check') }}" method="POST" style="display: inline;">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                            <input type="hidden" name="reserv_id" value="{{ res.id }}">
+                                            <button type="submit" class="btn-action-delete">Видалити</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="5" class="table-empty">Бронювань немає.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-users" class="tab-content hidden">
+                <div class="admin-page-header">
+                    <h1>Клієнти Бази</h1>
+                    <p>Список зареєстрованих користувачів.</p>
+                </div>
+
+                <div class="table-container-card full-width">
+                    <div class="admin-table-scroll">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Нікнейм</th>
+                                    <th>Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for u in all_users %}
+                                <tr>
+                                    <td>{{ u.id }}</td>
+                                    <td>{{ u.nickname }}</td>
+                                    <td>{{ u.email }}</td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="3" class="table-empty">Користувачі відсутні.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script nonce="{{ csp_nonce() }}">
+        function switchTab(tabId) {
+            const sections = document.querySelectorAll('.tab-content');
+            sections.forEach(section => {
+                section.style.setProperty('display', 'none', 'important');
+            });
+            
+            const activeSection = document.getElementById('tab-' + tabId);
+            if (activeSection) {
+                activeSection.style.setProperty('display', 'block', 'important');
+            }
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll('.tab-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabTarget = this.getAttribute('data-tab');
+                    if (tabTarget) {
+                        switchTab(tabTarget);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.delete-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    if (!confirm('Видалити цю позицію назавжди?')) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
+</body>

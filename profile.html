@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мій Профіль | Tomato&Co</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="auth-body">
+
+<div class="auth-container" style="max-width: 450px;">
+    <h2>Мій Профіль</h2>
+    <p class="auth-subtitle">Ваші особисті дані в системі онлайн-ресторану</p>
+
+    <div style="text-align: left; margin: 25px 0; background: #fdfdfd; padding: 20px; border-radius: 12px; border: 2px solid #eaeaea;">
+        <div style="margin-bottom: 15px;">
+            <label style="font-size: 12px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 1px;">Нікнейм</label>
+            <p style="font-size: 18px; font-weight: 600; color: #333; margin-top: 4px;">{{ user.nickname }}</p>
+        </div>
+        
+        <div>
+            <label style="font-size: 12px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 1px;">Електронна пошта</label>
+            <p style="font-size: 16px; font-weight: 500; color: #555; margin-top: 4px;">{{ user.email }}</p>
+        </div>
+    </div>
+
+    <a href="/" class="btn-submit" style="display: block; text-decoration: none; background-color: #2ed573; text-align: center; box-shadow: 0 5px 15px rgba(46, 213, 115, 0.2);">
+        Перейти до меню 🍕
+    </a>
+    
+    <div class="form-footer" style="margin-top: 20px;">
+        <a href="/logout" style="color: #ff4757; font-weight: 600; text-decoration: none; font-size: 14px;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+            Вийти з акаунту
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Tomato&Co | Мої замовлення</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include '_navigation.html' %}
+
+    <main class="main-content">
+        <div class="auth-container" style="max-width: 700px; margin: 40px auto; padding: 35px; background: #1a1a1a; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); font-family: 'Montserrat', sans-serif;">
+            
+            <h2 style="color: #ffd700; text-align: center; font-size: 28px; margin-bottom: 30px; font-weight: 700; border-bottom: 2px solid #2a2a2a; padding-bottom: 15px;">
+                📋 Ваша історія замовлень
+            </h2>
+
+            {% if us_orders %}
+                <div class="orders-list" style="display: flex; flex-direction: column; gap: 20px;">
+                    {% for order in us_orders %}
+                        <div class="order-card" style="background: #222; padding: 20px; border-radius: 8px; border-left: 4px solid #ffd700; display: flex; justify-content: space-between; align-items: center; transition: 0.3s;">
+                            
+                            <div class="order-info">
+                                <h3 style="color: #fff; margin: 0 0 8px 0; font-size: 18px; font-weight: 600;">
+                                    Замовлення №{{ order.id }}
+                                </h3>
+                                <p style="color: #aaa; margin: 0; font-size: 14px;">
+                                    📅 <strong>Дата:</strong> 
+                                    {% if order.order_time.strftime %}
+                                        {{ order.order_time.strftime('%d.%m.%Y %H:%M') }}
+                                    {% else %}
+                                        {{ order.order_time }}
+                                    {% endif %}
+                                </p>
+                            </div>
+
+                            <div class="order-action">
+                                <a href="/my_order/{{ order.id }}" style="display: inline-block; padding: 10px 18px; background: #ffd700; color: #121212; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    🔍 Деталі
+                                </a>
+                            </div>
+
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div style="text-align: center; color: #aaa; padding: 40px 20px;">
+                    <p style="font-size: 18px; margin-bottom: 20px;">Ви ще не робили замовлень.</p>
+                    <a href="/menu" class="btn-detail" style="display: inline-block; padding: 10px 20px; background: #ffd700; color: #121212; text-decoration: none; border-radius: 6px; font-weight: 600;">Перейти до меню</a>
+                </div>
+            {% endif %}
+
+        </div>
+    </main>
+
+    <footer class="footer" style="margin-top: 40px;">
+        <p>© 2026 Tomato&Co. Всі права захищені.</p>
+    </footer>
+</body>
+</html>

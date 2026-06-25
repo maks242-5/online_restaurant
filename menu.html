@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Tomato&Co | Меню</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include '_navigation.html' %}
+
+    <main class="main-content">
+        <div id="menuList">
+            {% if all_positions %}
+                {% for position in all_positions %}
+                    <div class="menu-item">
+                        
+                        {% if position.file_name.startswith('http') %}
+                            <img src="{{ position.file_name }}" alt="{{ position.name }}">
+                        {% elif position.name == "Піца Пепероні" %}
+                            <img src="https://images.unsplash.com/photo-1601924582971-df6b0a5f0c9b?auto=format&fit=crop&w=500&q=80" alt="Піца Пепероні">
+                        {% elif position.name == "Бургер Чізмікс" %}
+                            <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=500&q=80" alt="Бургер Чізмікс">
+                        {% elif position.name == "Полуничний Мілкшейк" %}
+                            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=500&q=80" alt="Полуничний Мілкшейк">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='menu/' + position.file_name) }}" alt="{{ position.name }}">
+                        {% endif %}
+
+                        <div class="menu-info">
+                            <div>
+                                <h3 class="food-title">{{ position.name }}</h3>
+                                <p class="food-desc">{{ position.ingredients }}</p>
+                            </div>
+
+                            <div>
+                                <div class="menu-footer">
+                                    <span class="menu-price">{{ position.price }} грн</span>
+                                    <span class="menu-weight">{{ position.weight }} г</span>
+                                </div>
+
+                                <form method="POST" action="{{ url_for('position', name=position.name) }}" class="basket-form">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                    <input type="hidden" name="name" value="{{ position.name }}">
+                                    <input type="number" name="num" value="1" min="1" class="basket-input">
+                                    <button type="submit" class="btn-order">🛒 В кошик</button>
+                                </form>
+
+                                <a href="{{ url_for('position', name=position.name) }}" class="btn-detail">Оглянути детальніше</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="not-found">
+                    <p>Страви не знайдені.</p>
+                    <p style="margin-top: 10px;">Спробуйте інший запит або поверніться до <a href="{{ url_for('menu') }}" style="color: #ffd700; text-decoration: underline;">повного меню</a>.</p>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>© 2026 Tomato&Co. Всі права захищені.</p>
+    </footer>
+</body>
+</html>

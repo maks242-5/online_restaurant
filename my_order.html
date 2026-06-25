@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Tomato&Co | Деталі замовлення</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include '_navigation.html' %}
+
+    <main class="main-content">
+        <div class="auth-container" style="max-width: 650px; margin: 40px auto; padding: 35px; background: #1a1a1a; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); font-family: 'Montserrat', sans-serif;">
+            
+            <div style="border-bottom: 2px dashed #444; padding-bottom: 20px; margin-bottom: 20px; text-align: center;">
+                <h2 style="color: #ffd700; font-size: 28px; margin-bottom: 10px; font-weight: 700;">Ваше замовлення №{{ order.id }}</h2>
+                <p style="color: #aaa; font-size: 15px;">
+                    <strong>Дата та час:</strong> 
+                    {% if order.order_time.strftime %}
+                        {{ order.order_time.strftime('%d.%m.%Y %H:%M') }}
+                    {% else %}
+                        {{ order.order_time }}
+                    {% endif %}
+                </p>
+            </div>
+
+            <p style="color: #ffd700; margin-bottom: 15px; text-transform: uppercase; font-size: 14px; letter-spacing: 1px; font-weight: 600;">Перелік позицій:</p>
+            
+            <ul style="list-style: none; padding: 0; margin-bottom: 25px;">
+                {% for name, quantity in order.order_list.items() %}
+                    <li style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #2a2a2a; color: #eee;">
+                        <span style="font-size: 16px;">🍕 {{ name }}</span>
+                        <span style="color: #aaa; font-weight: 600;">кількість: <strong style="color: #fff;">{{ quantity }}</strong></span>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <div style="background: #222; padding: 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-left: 4px solid #ffd700;">
+                <span style="color: #aaa; font-size: 18px; font-weight: 600;">Загальна сума:</span>
+                <span style="color: #ffd700; font-size: 24px; font-weight: 700;">{{ total_price }} грн</span>
+            </div>
+
+            <form method="post" action="/cancel_order/{{ order.id }}" style="text-align: center;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" style="width: 100%; padding: 12px; background: #ff4d4d; color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.3s;"
+                        onclick="return confirm('Ви впевнені, що хочете скасувати це замовлення?');">
+                    ❌ Скасувати замовлення
+                </button>
+            </form>
+            
+        </div>
+    </main>
+
+    <footer class="footer" style="margin-top: 40px;">
+        <p>© 2026 Tomato&Co. Всі права захищені.</p>
+    </footer>
+</body>
+</html>

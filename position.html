@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ position.name }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include '_navigation.html' %}
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash-messages" style="max-width: 600px; margin: 20px auto; text-align: center;">
+          <div class="alert" style="background: #ffd700; color: #121212; padding: 10px; border-radius: 8px; font-weight: 600;">{{ messages[-1] }}</div>
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <main class="main-content">
+        <div class="product-detail-container">
+            <img class="product-detail-img" src="/static/menu/{{ position.file_name }}" alt="{{ position.name }}">
+            
+            <h1 class="product-detail-title">{{ position.name }} <span style="font-size: 18px; color: #aaa;">({{ position.weight }}г)</span></h1>
+            
+            <span class="product-detail-ingredients">{{ position.ingredients }}</span>
+            
+            <div class="product-detail-desc">
+                {{ position.description }}
+            </div>
+            
+            <div class="product-detail-price">{{ position.price }} грн</div>
+            
+            <form class="product-detail-form" method="post" action="{{ url_for('position', name=position.name) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="name" value="{{ position.name }}">
+                <input class="product-detail-input" type="number" name="num" value="1" min="1" required>
+                <input class="btn-order" type="submit" value="Додати в кошик">
+            </form>
+        </div>
+    </main>
+</body>
+</html>

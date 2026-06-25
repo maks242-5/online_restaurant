@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Перевірка бронювань</title>
+    <style>
+        /* Загальні налаштування сторінки */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-weight: 600;
+            border-bottom: 2px solid #ff4757; /* Фірмова томатна лінія */
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        /* Контейнер для таблиці з прокруткою на мобілках */
+        .table-responsive {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+
+        /* Стилізація таблиці */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            min-width: 600px;
+        }
+
+        th, td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eef2f5;
+        }
+
+        /* Шапка таблиці */
+        th {
+            background-color: #f8f9fa;
+            color: #5a6a7a;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Ефекти для рядків */
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background-color: #fdfdfe;
+        }
+
+        /* Акуратний бейдж для типу столика */
+        .table-type-badge {
+            background-color: #e3f2fd;
+            color: #0d6efd;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        /* Нікнейм користувача */
+        .user-nickname {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        /* Кнопка видалення */
+        .btn-delete {
+            background-color: #fff;
+            color: #dc3545;
+            border: 1px solid #dc3545;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-delete:hover {
+            background-color: #dc3545;
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+        }
+
+        /* Повідомлення про порожню таблицю */
+        .empty-row {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            padding: 30px !important;
+        }
+    </style>
+</head>
+<body>
+
+    {% include '_navigation.html' %}
+
+    <h2>Перевірка бронювань</h2>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Час візиту</th>
+                    <th>Тип столика</th>
+                    <th>Користувач</th>
+                    <th>Дія</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in all_reservations %}
+                <tr>
+                    <td>#{{ res.id }}</td>
+                    <td>{{ res.time_start }}</td>
+                    <td>
+                        <span class="table-type-badge">на {{ res.type_table }} ос.</span>
+                    </td>
+                    <td>
+                        <span class="user-nickname">{{ res.user.nickname }}</span>
+                    </td>
+                    <td>
+                        <form method="post" style="margin: 0;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                            <input type="hidden" name="reserv_id" value="{{ res.id }}">
+                            <button type="submit" class="btn-delete" onclick="return confirm('Ви впевнені, що хочете видалити це бронювання?')">Видалити</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="empty-row">Наразі немає жодного заброньованого столика.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

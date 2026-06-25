@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Tomato&Co | Вхід</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include '_navigation.html' %}
+
+    <main class="main-content" style="display: flex; align-items: center; justify-content: center; min-height: 75vh;">
+        <div class="auth-container" style="width: 100%; max-width: 420px; padding: 40px 30px; background: #1a1a1a; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.6); font-family: 'Montserrat', sans-serif; box-sizing: border-box;">
+            
+            <h2 style="color: #ffd700; text-align: center; margin: 0 0 10px 0; font-size: 26px; font-weight: 700;">Авторизація</h2>
+            <p style="color: #888; text-align: center; font-size: 14px; margin-bottom: 30px;">Раді бачити вас знову!</p>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div style="background: #ff4d4d; color: #fff; padding: 10px; border-radius: 6px; text-align: center; font-size: 14px; margin-bottom: 20px;">
+                        {{ messages[-1] }}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" style="display: flex; flex-direction: column; gap: 18px;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                
+                <div>
+                    <label style="display: block; color: #ccc; font-size: 13px; margin-bottom: 6px; font-weight: 500;">Ім'я користувача (Nickname)</label>
+                    <input type="text" name="nickname" placeholder="Введіть ваш нікнейм" required 
+                           style="width: 100%; padding: 12px; background: #252525; border: 1px solid #333; border-radius: 6px; color: #fff; font-size: 14px; font-family: inherit; box-sizing: border-box; transition: 0.3s; outline: none;"
+                           onfocus="this.style.borderColor='#ffd700'" onblur="this.style.borderColor='#333'">
+                </div>
+
+                <div>
+                    <label style="display: block; color: #ccc; font-size: 13px; margin-bottom: 6px; font-weight: 500;">Пароль</label>
+                    <input type="password" name="password" placeholder="Введіть пароль" required 
+                           style="width: 100%; padding: 12px; background: #252525; border: 1px solid #333; border-radius: 6px; color: #fff; font-size: 14px; font-family: inherit; box-sizing: border-box; transition: 0.3s; outline: none;"
+                           onfocus="this.style.borderColor='#ffd700'" onblur="this.style.borderColor='#333'">
+                </div>
+
+                <button type="submit" style="width: 100%; padding: 14px; background: #ffd700; color: #121212; border: none; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 10px;">
+                    Увійти в акаунт
+                </button>
+            </form>
+
+            <div style="text-align: center; margin-top: 25px; font-size: 14px; color: #aaa;">
+                Ще не маєте профілю? <a href="/register" style="color: #ffd700; text-decoration: none; font-weight: 600;">Створити акаунт</a>
+            </div>
+            
+            <div style="text-align: center; margin-top: 15px; font-size: 13px;">
+                <a href="/" style="color: #666; text-decoration: none;">← На головну сторінку</a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>© 2026 Tomato&Co. Всі права захищені.</p>
+    </footer>
+</body>
+</html>

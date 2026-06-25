@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Tomato&Co | Усі користувачі</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include '_navigation.html' %}
+
+    <main class="main-content">
+        <div class="auth-container" style="max-width: 900px; margin: 40px auto; padding: 35px; background: #1a1a1a; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); font-family: 'Montserrat', sans-serif;">
+            
+            <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 30px; border-bottom: 2px solid #2a2a2a; padding-bottom: 15px;">
+                <span style="font-size: 28px;">👥</span>
+                <h2 style="color: #ffd700; margin: 0; font-size: 28px; font-weight: 700;">База користувачів ресторану</h2>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 10px; color: #eee; text-align: left;">
+                    <thead>
+                        <tr style="background: #252525; border-bottom: 3px solid #ffd700;">
+                            <th style="padding: 15px; font-weight: 700; color: #ffd700; border-top-left-radius: 6px;">ID</th>
+                            <th style="padding: 15px; font-weight: 700; color: #ffd700;">Нікнейм</th>
+                            <th style="padding: 15px; font-weight: 700; color: #ffd700; border-top-right-radius: 6px;">Email-адреса</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in all_users %}
+                            <tr style="border-bottom: 1px solid #2a2a2a; background: #1e1e1e; transition: background 0.2s;">
+                                <td style="padding: 14px; color: #888; font-weight: 600; font-family: monospace; font-size: 15px;">#{{ user.id }}</td>
+                                <td style="padding: 14px; font-weight: 600; color: #fff;">
+                                    {% if user.nickname == 'Admin' %}
+                                        <span style="color: #ffd700;">👑 Admin</span>
+                                    {% else %}
+                                        👤 {{ user.nickname }}
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 14px; color: #ccc; font-size: 15px;">{{ user.email }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-top: 25px; text-align: right;">
+                <p style="color: #666; font-size: 14px; margin: 0;">Всього зареєстровано користувачів: <strong style="color: #ffd700;">{{ all_users|length }}</strong></p>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="footer" style="margin-top: 40px;">
+        <p>© 2026 Tomato&Co. Всі права захищені.</p>
+    </footer>
+</body>
+</html>

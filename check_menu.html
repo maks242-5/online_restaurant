@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Адміністрування меню</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f9f9f9; }
+        h2 { color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        tr:hover { background-color: #f1f1f1; }
+        button { padding: 6px 12px; margin-right: 5px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; }
+        .btn-status { background-color: #ffc107; color: black; }
+        .btn-delete { background-color: #dc3545; color: white; border: none; }
+        .btn-receipt { background-color: #0d6efd; color: white; border: none; }
+        
+        /* Стилі для зони чека */
+        .receipt-container { margin-top: 30px; padding: 20px; border: 2px dashed #333; background: #fff; width: 300px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .receipt-header { text-align: center; font-weight: bold; margin-bottom: 10px; }
+        .receipt-line { display: flex; justify-content: space-between; margin: 5px 0; }
+        .receipt-divider { border-top: 1px dashed #333; margin: 10px 0; }
+    .text-green { color: green; }
+    .text-red { color: red; }
+    </style>
+</head>
+<body>
+
+    {% include '_navigation.html' %}
+
+<h2>Перевірка меню та генерація чеків</h2>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Назва</th>
+        <th>Опис</th>
+        <th>Ціна</th>
+        <th>Активний</th>
+        <th>Дія</th>
+    </tr>
+    {% for pos in all_positions %}
+    <tr>
+        <td>{{ pos.id }}</td>
+        <td><strong>{{ pos.name }}</strong></td>
+        <td>{{ pos.description }}</td>
+            <span class="{{ 'text-green' if pos.active else 'text-red' }}">
+        <td>
+            <span class="{{ 'text-green' if pos.active else 'text-red' }}">
+                {{ "Так" if pos.active else "Ні" }}
+            </span>
+        </td>
+        <td>
+            <form method="post" style="display: inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="pos_id" value="{{ pos.id }}">
+                
+                <button type="submit" name="change_status" class="btn-status">Змінити статус</button>
+                <button type="submit" name="delete_position" class="btn-delete" onclick="return confirm('Ви впевнені?')">Видалити</button>
+                
+                <button type="submit" name="show_receipt" class="btn-receipt">Згенерувати чек</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{# Блок фіскального чека з'являється лише тоді, коли адмін натиснув кнопку "Згенерувати чек" #}
+{% if selected_position %}
+<div class="receipt-container">
+    <div class="receipt-header">
+        *** Tomato&Co ***<br>
+        Ласкаво просимо!<br>
+        <small>Чек перевірки позиції меню</small>
+    </div>
+    <div class="receipt-divider"></div>
+    
+    <div class="receipt-line">
+        <span>Об'єкт ID:</span>
+        <span>#{{ selected_position.id }}</span>
+    </div>
+    <div class="receipt-line">
+        <span>Назва товару:</span>
+        <span>{{ selected_position.name }}</span>
+    </div>
+    <div class="receipt-line">
+        <span>Кількість:</span>
+        <span>1 шт.</span>
+    </div>
+    
+    <div class="receipt-divider"></div>
+    
+    <div class="receipt-line" style="font-weight: bold;">
+        <span>СУМА:</span>
+        <span>{{ selected_position.price }} грн</span>
+    </div>
+    
+    <div class="receipt-divider"></div>
+    <div class="receipt-header">
+        Дякуємо за візит!<br>
+        Гарного дня!
+    </div>
+</div>
+{% endif %}
+
+</body>
+</html>
